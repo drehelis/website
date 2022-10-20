@@ -9,8 +9,14 @@ jobs:
     if: ${{ github.event.label.name == 'automated_pr' }}
     runs-on: ubuntu-latest
     steps:
+      - uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: 251157
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Enable auto-merge for Automated PRs
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
